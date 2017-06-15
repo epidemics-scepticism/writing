@@ -302,6 +302,8 @@ For example, imagine you had a set of 2048 common words to pick from. If you pic
 
 I'd suggest you aim for something stronger than the 44 bits in the XKCD comic. [NASA recommend](https://www.nas.nasa.gov/hecc/support/kb/using-gpg-to-encrypt-your-data_242.html) picking 5 random words of 5-10 letters in size, a similar method known as [Diceware](https://en.wikipedia.org/wiki/Diceware) allows you to control how strong the passphrase is.
 
+I have created an example implementation of such a password generator, available [here](https://github.com/epidemics-scepticism/pypassword-generator).
+
 You'll want to pick two of these passphrases and commit them to memory. The first passphrase will be used to [decrypt your hard drive](#encryptingyourhdd). The second passphrase will be the master password to your [password manager](#passwordmanagement), which will generate and store the rest of your passwords for your other accounts.
 
 ### Password Management
