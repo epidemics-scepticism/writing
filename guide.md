@@ -203,6 +203,10 @@ This "Threat Data" is likely similar to the data collected by MalwareBytes.
 
 Another consideration is that (against certain types of attackers) anti-virus can act as the means of compromise or privilege escalation. Tavis Ormandy, a researcher with Google's Project Zero, has found and documented severe vulnerabilities in (or introduced into other products by) anti-virus software from Sophos, Symantec, Kaspersky and others. Other researchers have consistently found similar bugs in security software. In fact a [DoD report on it's own systems](https://twitter.com/dotMudge/status/642758829697056768) suggests that 1/3rd of vulnerabilities in their systems came from "security" software.
 
+Further examples of vulnerabilities:
+
+* [bee13oy/AV_Kernel_Vulns](https://github.com/bee13oy/AV_Kernel_Vulns)
+
 Instead opt for a more secure system to operate inside. This means using access control mechanisms, like [AppArmor](http://wiki.apparmor.net/), [grsecurity/PaX](https://grsecurity.net/) or [SELinux](https://selinuxproject.org/) on Linux, App sandboxing on OSX and [EMET](https://support.microsoft.com/en-us/help/2458544/the-enhanced-mitigation-experience-toolkit) on Windows. Keep your software up-to-date, verify software that you install and be wary of opening files from unknown or untrusted sources. Disable or don't install superfluous features to reduce the attack surface and attacker can reach. Windows users should also consider using [Hardentools](https://github.com/securitywithoutborders/hardentools) from [Security Without Borders](https://securitywithoutborders.org/)
 
 ### Resisting Forensic Analysis
