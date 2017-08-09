@@ -47,6 +47,21 @@ This metadata does not constitute a unique fingerprint but it can be used to dis
 
 Imagine the situation where I can see traffic going into and out of a VPN server, lets say it has multiple users and essentially the inbound and outbound traffic is being mixed in ways that I can't distinguish (although more sophisticated analysis would certainly work, i.e. timing), instead I look at the inbound and outbound packets TCP/IP metadata, the packets coming in are generated on your local system and specific to characteristics of your operating system and setup, the packets that the VPN sends out are _also_ generated on your local system and will carry the same characteristics. As such I can split the set of users going into and out of the mix.
 
+## Bottleneck or Wateringhole
+The set of VPN providers who are "trusted" _(note: not the same as trustworthy)_ by the wider community is quite small. This means that lots of _"interesting"_ traffic passes through choke points which reduces the places on the internet you'd need to be able to view to target them all individually. By spreading FUD and paranoia you can get your targets to come to you.
+
+VPNs provide _confidentiality_, they simply encrypt packets generated on your system and send them off to be reconstructed and sent from a remote location, and responding packets are, conversely, sent back down the encrypted connection. This does little to mask the nature of the underlying traffic. Many of the attacks on Tor look at traffic flow patterns and traffic volumes and since VPNs do not try to hide this information the attacks that work on Tor will work on Tor over a VPN, except now both your ISP _and_ the VPN provider is in a position to perform them, you've only increased the set of positions that an attacker can take to perform such attacks.
+
+## Logging
+VPN providers log, I've seen examples of VPN providers who log everything that their websites sales pitch explicitly states they _don't_ log (who connected from where and when, etc). Even _if_ the VPN provider _doesn't_ log it's likely that their upstream ISP is logging and [in the past this has been sufficient](https://www.bestvpn.com/blog/8383/earthvpn-user-arrested-cops-find-logs/) to deanonymize users.
+
+Sometimes [they're doing exactly the opposit of what they promised](https://cdt.org/press/cdt-files-complaint-with-the-ftc-on-hotspot-shield-vpn/).
+
+## Exceptions
+VPNs _under certain circumstances_ may provide a plausible "cover" for your Tor traffic _but_ it's not very good cover and wouldn't stand up to further scrutiny. It exposes you to more risk so unless it is necessary _and_ the cover would be plausible in your case _(e.g. people commonly use VPNs to watch netflix in your country/area and such activity is generally given a pass)_ then do not use one.
+
+Mo Hops Mo Problems.
+
 # Is Tor broken or backdoored?
 ## Broken
 ### Not universally, at least
