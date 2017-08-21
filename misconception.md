@@ -37,7 +37,7 @@ Well, the Exit can do everything the VPN can do to the traffic but it can't do i
 
    This is probably fine. It doesn't improve the anonymity provided by Tor but it might create more plausible cover for a local adversary watching your connection but it may also put your connection directly into an adversary controlled network and it's protections likely wouldn't stand up to close scrutiny. Careful observation of traffic flow patterns may reveal the kind of traffic that is being sent across the VPN.
 
-## Indinstinguishability
+## Indistinguishability
 ### TCP and IP stack metadata
 VPNs function fundamentally differently from Tor. A VPN works by encapsulating a full IP packet. This means that when the packet is reconstructed at the other end of the VPNs connection and sent out, the IP and TCP metadata is indicative of your local system.
 
@@ -86,7 +86,7 @@ This suggests they do not have the potential to act as Eve, at least not in a me
 ### Open Source
 Tor's code is open source, it has been reviewed repeatedly and has been the subject of many academic papers looking for weaknesses in the protocol. I'm not aware of any evidence-based (read: sane) accusal of a backdoor in Tor software.
 
-### Reproducable builds
+### Reproducible builds
 Tor Browser is build reproducibly, this means that the software that Tor distributes can be checked to ensure that when the publicly auditable source code is built under specific, inspectable and reproducible conditions it results in *exactly* the same binary file that the Tor Project distributes. This ensures the source code maps to the binary file and there is no slight of hand on their part to distribute backdoored binaries.
 
 # ExitNodes, ExcludeNodes and GeoIP.
