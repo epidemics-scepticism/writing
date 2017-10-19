@@ -206,8 +206,18 @@ Another consideration is that (against certain types of attackers) anti-virus ca
 Further examples of vulnerabilities:
 
 * [bee13oy/AV_Kernel_Vulns](https://github.com/bee13oy/AV_Kernel_Vulns)
+* [Israel (allegedly) hacked Kaspersky, alleges Russian agents used it to steal files](https://www.washingtonpost.com/world/national-security/israel-hacked-kaspersky-then-tipped-the-nsa-that-its-tools-had-been-breached/2017/10/10/d48ce774-aa95-11e7-850e-2bdd1236be5d_story.html)
+* ["Kaspersky representatives (allegedly) boasted they could leverage their product in order to facilitate the capture of targets tied to terrorism in the Middle East"](https://www.cyberscoop.com/kaspersky-fbi-cia-fsb-demarche-2015/)
+* [Many](https://bugs.chromium.org/p/project-zero/issues/detail?id=823) . [Project](https://bugs.chromium.org/p/project-zero/issues/detail?id=820) . [Zero](https://bugs.chromium.org/p/project-zero/issues/detail?id=769) . [Bugs](https://bugs.chromium.org/p/project-zero/issues/detail?id=1252) . (_[more...and more...and more...](https://bugs.chromium.org/p/project-zero/issues/list?can=1&q=owner:taviso@google.com&sort=-id&colspec=ID%20Type%20Status%20Priority%20Milestone%20Owner%20Summary)_)
+* [Earlier research by @matalaz](https://twitter.com/matalaz/status/451934665830436864)
 
 Instead opt for a more secure system to operate inside. This means using access control mechanisms, like [AppArmor](http://wiki.apparmor.net/), [grsecurity/PaX](https://grsecurity.net/) or [SELinux](https://selinuxproject.org/) on Linux, App sandboxing on OSX and [EMET](https://support.microsoft.com/en-us/help/2458544/the-enhanced-mitigation-experience-toolkit) on Windows. Keep your software up-to-date, verify software that you install and be wary of opening files from unknown or untrusted sources. Disable or don't install superfluous features to reduce the attack surface and attacker can reach. Windows users should also consider using [Hardentools](https://github.com/securitywithoutborders/hardentools) from [Security Without Borders](https://securitywithoutborders.org/)
+
+Since you can't afford the risk that your anti-virus provider will betray you, willingly or otherwise, you instead want to create _deep_ defences. You want to avoid situations where _one exploit_ will ever be enough, if one exploit is enough you will always lose. You want to follow these general rules of thumb, to a level that is suitable for your needs (which may just be what the operating system you chose offers by default). When considering them also consider _what_ it is you want to protect, there are trade-offs to be made here which only you can make.
+
+* Make it harder to exploit by using code written in memory safe languages (Go, Rust, etc) and code build with compile-time hardening, and run in an environment with link/run-time hardening (EMET, PaX, etc).
+* Make successful exploits only have a constrained execution environment through kernel enforced access controls (AppArmor, SELinux, Namespaces, etc) to frustrate attempts to elevate privileges or access private data.
+* Reduce visibility of the system outside of the scope of programs and reduce it's ability to interact with the system to provide only what it needs (seccomp, namespaces, sandboxes, virtualization, etc). This will help reduces its ability to exiltrate _everything_, reduce the exposed system interfaces for fingerprinting, reduce the attack surface for further privilege escalation.
 
 ### Resisting Forensic Analysis
 
