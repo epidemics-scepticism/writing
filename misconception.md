@@ -97,6 +97,8 @@ It doesn't.
 ### Why does it think it knows?
 GeoIP works by looking at who the IP belongs to, often this can be as simple as just parsing the address on a whois record. Whois records are not authoritative _(Whois is not very resistant to attacks. You can lie on it and it's a plaintext protocol)_. If you look at the Tor relay [BC630CBBB518BE7E9F4E09712AB0269E9DC7D626](https://atlas.torproject.org/#details/BC630CBBB518BE7E9F4E09712AB0269E9DC7D626) you'll notice that according to GeoIP it's in Liberia. It's whois record states `country:        LR`. This is where the evidence for it's being in Liberia ends and in fact you can show evidence that it is _not_ in Liberia with ease and trivially discover it's likely location.
 
+For more examples of similar fakery by VPN providers (to pretend they have servers in different countries) and other questionable entities, read Benjojo's blog post: [A surprising amount of people want to be in North Korea](https://blog.benjojo.co.uk/post/north-korea-dprk-bgp-geoip-fruad).
+
 ### IPs aren't tied to a location.
 Another thing you will notice is that often databases take a while to be updated. Blocks of IP addresses can change hands between companies. One day they're being used in France, the next they're in the Mexico. I ran a relay that for a period of months was incorrectly reported as being on the wrong side of the planet. This is not a rare occurrence.
 
