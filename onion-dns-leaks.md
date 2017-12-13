@@ -1,5 +1,7 @@
 # Inducing DNS Leaks in Onion Web Services
 
+_(Note: I will publish the code...after it's gone some thorough cleaning up and the threading and concurrency mess I've created is resolved...hopefully soon.)
+
 Some time over a year ago now (I don't recall the exact dates but the timestamp on a backup copy of my code suggests around September 2016), inspired by DNS based [Canary Tokens](http://canarytokens.org/generate) I decided to follow a similar method to see if I could get remote HTTP services hosted as a Tor onion service to resolve a supplied domain name.
 
 To skip the boring backstory and awful prose, [click here](#findings)
