@@ -141,6 +141,15 @@ probed at my listener (over Tor).
 
 # Code
 
+What you will need:
+- Control of a DNS server and a domain or subdomain for which the DNS server is
+- Log access for said DNS servers
+- Grep
+
+Consider the "listener" variable to the domain or subdomain you setup, run the program giving it a list of onion URLs to try, pipe stdout to a log file, then grep for the tags generating in the log file in your DNS server logs to match a DNS request to a URL and Header combination.
+
+If you see a DNS request with the case randomized, this resolve probably happened through Tor, since it uses [0x20 encoding](https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00).
+
     package main
     
     import (
