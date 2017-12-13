@@ -289,13 +289,16 @@ If you see a DNS request with the case randomized, this resolve probably happene
     }
     
     func main() {
-    	n, e := rand.Read(key[:32])
-    	if e != nil || n != 32 {
+    	if n, e := rand.Read(key[:32]); e != nil || n != 32 {
     		perr(e, true)
     	}
     	onion_file := flag.String("onions", "onions.txt", "list of onion URLs to use")
     	workers := flag.Int("workers", runtime.NumCPU(), "number of workers to run")
     	flag.Parse()
+    	raw_onions, e := ioutil.ReadFile(*onion_file)
+     if e != nil {
+          perr(e, true)
+     }
     	runtime.GOMAXPROCS(*workers)
     	done := make(chan bool)
     	in := make(chan string)
@@ -303,7 +306,6 @@ If you see a DNS request with the case randomized, this resolve probably happene
     		die.Add(1)
     		go probe(done, in, i+1)
     	}
-    	raw_onions, e := ioutil.ReadFile(*onion_file)
     	onions := bytes.Split(raw_onions, []byte{0xa})
     	go func() {
     		defer close(in)
