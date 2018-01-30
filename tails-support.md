@@ -18,7 +18,7 @@ Picking an XMPP provider is a lot like picking an email provider, the threats ar
 
 A large set of privacy conscious providers offer .onion accesses to their servers and also will federate between themselves over .onion to reduce the visibility of connections between servers to anyone trying to spy on communications between them.
 
-In this example I'm going to pick The Calyx Institute as a provider because I know that they allow you to create accounts directly from the client and they provide .onion access and federate with other servers over .onion.
+In this example I'm going to pick The Calyx Institute as a provider because I know that they allow you to create accounts directly from the client and they provide .onion access and federate with other servers over .onion but other providers also offer this and should be considered, some of them are listed [here](https://github.com/nickcalyx/xmpp-onion-map/blob/master/onions-map.lua).
 
 From the top bar of the Tails user interface, we want to select: _Applications_ -> _Favorites_ -> _Pidgin_.
 
