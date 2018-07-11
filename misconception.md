@@ -53,7 +53,7 @@ The set of VPN providers who are "trusted" _(note: not the same as trustworthy)_
 VPNs provide _confidentiality_, they simply encrypt packets generated on your system and send them off to be reconstructed and sent from a remote location, and responding packets are, conversely, sent back down the encrypted connection. This does little to mask the nature of the underlying traffic. Many of the attacks on Tor look at traffic flow patterns and traffic volumes and since VPNs do not try to hide this information the attacks that work on Tor will work on Tor over a VPN, except now both your ISP _and_ the VPN provider is in a position to perform them, you've only increased the set of positions that an attacker can take to perform such attacks.
 
 ## Logging
-VPN providers log, I've seen examples of VPN providers who log everything that their websites sales pitch explicitly states they _don't_ log (who connected from where and when, etc). Even _if_ the VPN provider _doesn't_ log it's likely that their upstream ISP is logging and [in the past this has been sufficient](https://www.bestvpn.com/blog/8383/earthvpn-user-arrested-cops-find-logs/) to deanonymize users.
+VPN providers log, I've seen examples of VPN providers who log everything that their websites sales pitch explicitly states they _don't_ log (who connected from where and when, etc). Even _if_ the VPN provider _doesn't_ log it's likely that their upstream ISP is logging and [in the past this has been sufficient](https://web.archive.org/web/20170109013906/https://www.bestvpn.com/blog/8383/earthvpn-user-arrested-cops-find-logs/) to deanonymize users.
 
 Sometimes [they're doing exactly the opposit of what they promised](https://cdt.org/press/cdt-files-complaint-with-the-ftc-on-hotspot-shield-vpn/).
 
